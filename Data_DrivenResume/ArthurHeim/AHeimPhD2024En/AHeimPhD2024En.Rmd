@@ -1,0 +1,316 @@
+---
+name: Arthur
+surname: Heim
+document: ""
+qualifications: PhD
+position: "Postdoctoral researcher, French National Family Allowance Fund (Cnaf)"
+pronouns: he/they:him/them
+googlescholar: "ALzz0kEAAAAJ"
+address: "Paris, France"
+link-citations: true
+citecolor: blue
+#profilepic: "cv-vitae/img/PSE_a.heim-12.jpg"
+www: parisschoolofeconomics.eu/en/heim-arthur/
+email: "heimarthur@gmail.com"
+twitter: heimarthur
+headcolor: "a349a4"
+footcolor: "ff0080"
+linkcolor: "ff0080"
+urlcolor: "0000ff" 
+aboutme: "I am an applied economist working on the design and evaluation of public policies to reduce inequalities and poverty in France. I combine field experiments and microeconometrics to study the effects of active labour market policies for single mothers and how administrative support and information can improve access to early childcare services. I also use market design and implement fair assignment mechanisms for daycare seats in French municipalities."
+header-includes:
+  \usepackage{float}
+  \usepackage{starfont}
+  \usepackage{typicons}
+  \usepackage{academicons}
+date: "`r format(Sys.time(), '%B %Y')`"
+output:
+  vitae::awesomecv:
+    page_total: true
+    latex_engine: "xelatex"
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+
+library(tidyverse)
+library(here)
+library(vitae)
+library(kableExtra)
+library(emojifont)
+library(fontawesome)
+library(tibble)
+library(gglgbtq)
+
+colorsLanguages <- palette_lgbtq("bisexual")
+
+```
+
+```{r functions, include=FALSE}
+readExcelSheets <- function(filename){
+  # read all sheets in .xlsx 
+  all <- readxl::excel_sheets(filename)
+  
+  # import each sheet into a list using readxl::read_excel
+  list <- lapply(all, function(x) readxl::read_excel(filename, sheet = x))
+  
+  # save sheet name for each sheet (list)
+  names(list) <- all
+  
+  # breaks up list and creates a dataframe for each sheet with df names matching sheet names
+  list2env(list, envir = .GlobalEnv)
+}
+```
+
+```{r load data, include=FALSE}
+# appointments <- read_csv(here("data", "appointments.csv"))
+# education <- read_csv(here("data", "education.csv"))
+# research <- read_csv(here("data", "research_experience.csv"))
+# teaching <- read_csv(here("data", "teaching_supervision.csv"))
+# awards <- read_csv(here("data", "awards.csv"))
+# leadership <- read_csv(here("data", "leadership.csv"))
+# presentations <- read_csv(here("data", "presentations.csv"))
+# training <- read_csv(here("data", "training.csv"))
+# skills <- read_csv(here("data", "skills_table.csv"))
+# tools <- read_csv(here("data", "digital_tools.csv"))
+
+readExcelSheets(here::here("Data", "ArthurHeimCareerDataEn.xlsx"))
+
+
+
+#bib <- tempfile(fileext = ".bib")
+
+
+```
+
+# Appointments
+
+## Current position
+
+```{r CurJob}
+MyJob <- appointments %>%
+  filter(current == "yes") %>% as.tibble() %>% 
+  detailed_entries(with = role,
+                   when = glue::glue("{start_date}--{end_date}"),
+                   what = institution,
+                   where = where,
+                   why = details,
+                   .protect = FALSE)
+
+MyJob
+```
+
+## Past experiences
+
+```{r}
+otherjob <- appointments %>%
+  filter(current != "yes") %>%
+  detailed_entries(with = role,
+                   when = glue::glue("{start_date}--{end_date}"),
+                   what = institution,
+                   where = where,
+                   why = details,
+                   .protect = FALSE)
+
+otherjob
+```
+
+# Education
+
+```{r}
+education %>%
+  detailed_entries(where = Institution,
+                   when = Year,
+                   with = Degree,
+                   what = Major,
+                   why = Details,
+                   .protect = FALSE)
+```
+
+\newpage
+<!-- # Skills -->
+
+
+# PhD thesis
+
+```{r}
+Thesis %>%
+  filter(draftAvailable == "yes") %>%
+  detailed_entries(what = subtitle,
+                   when = glue::glue("{status}: {end_date}"),
+                   with = glue::glue("{title} {link}"),
+                   where = coauthors,
+                   why = details,
+                   .protect = FALSE)
+```
+
+
+
+# Programming skills
+
+
+```{r include=TRUE}
+# skills <- read_csv(here("data", "skills.csv"))
+# skills %>%
+#   detailed_entries(with = type,
+#                    why = skill)
+#
+library(flextable)
+skills %>% 
+ 
+   kbl(booktabs = TRUE, format = "latex",escape = F) %>%
+   kable_styling(full_width = F,font_size=10, latex_options = "hold_position",protect_latex=FALSE) %>%
+   row_spec(0, bold = T) %>% 
+  # row_spec(0, bold = T, color = "#a349a4") |>
+#row_spec(1, bold = F, color = "#7f7f7f") |>
+column_spec(column = 3, width = '9 cm',color = colorsLanguages[c(3)]) %>% 
+column_spec(column = 1, width = '4 cm',bold=T,color = colorsLanguages[c(1)]) %>% 
+  column_spec(column = 2,width = '4 cm', italic = T,color = colorsLanguages[c(2)]) 
+
+```
+
+
+# Teaching experiences
+
+```{r}
+teaching %>%
+  detailed_entries(what = institution,
+                   when = glue::glue("{start_date}--{end_date}"),
+                   with = role,
+                   where = where,
+                   why = details,
+                   .protect = FALSE)
+```
+
+\clearpage
+# Working papers and ongoing projects
+
+## Ongoing researches
+
+```{r}
+Thesis %>%
+  filter(status == "Ongoing") %>%
+  detailed_entries(what = subtitle,
+                   when = glue::glue("{status}: {end_date}"),
+                   with = title,
+                   where = coauthors,
+                   why = details,
+                   .protect = FALSE)
+```
+
+
+## Collective work on reproducible research
+
+```{r}
+Thesis %>%
+  filter(status == "Collective") %>%
+  detailed_entries(what = subtitle,
+                   when = glue::glue("{status}: {end_date}"),
+                   with = title,
+                   where = coauthors,
+                   why = details,
+                   .protect = FALSE)
+```
+
+
+
+# Publications in French
+
+
+## Book
+<!-- \footnotesize -->
+```{r}
+# did not like this format so will add manually for now
+bib <- bibliography_entries(here("Data", "publi_heim.bib"))%>%distinct(title,.keep_all = TRUE) %>% 
+  mutate(dt=as.numeric(str_remove_all(id,"[:alpha:]"))) %>% arrange(desc(dt))
+
+bib %>% filter(bib$type=="book")
+
+  #arrange(desc(issued))
+# bibliography_entries(here("data", "papers.bib"))
+```
+
+
+## Other publications
+<!-- \footnotesize -->
+```{r}
+
+
+bib %>% filter(dt<2023 & (type %in% c("webpage",'book')==FALSE) & str_detect(bib$id,"ontaignac")==FALSE)
+
+  #arrange(desc(issued))
+# bibliography_entries(here("data", "papers.bib"))
+```
+
+<!-- \clearpage -->
+# Selected conferences
+
+
+```{r}
+conferences %>%
+  detailed_entries(what = institution,
+                   when = date,
+                   with = role,
+                   where = where,
+                   why = details,
+                   .protect = FALSE)
+```
+
+
+
+# Languages 
+
+```{r simpleLang, results='markup'}
+# tribble(
+#    ~type, ~desc,
+#    "Coding Languages",
+#     "R -- Python -- SQL -- JavaScript",
+#    "Software",
+#   "QGIS -- Earth Engine -- SAGA -- PostgreSQL -- ArcGIS -- GIMP",
+#    "Other",
+#   "Git -- Markdown -- LaTex -- OpenStreetMap"
+# ) |>
+#   brief_entries(what = desc, with = type, .protect = F)
+tribble(
+   ~`French`, ~`English`, ~`German`,
+  "Native",
+  "Proficient",
+  "Basic"
+) |>
+kable(booktabs = T, align = 'c', escape = F, format = "latex") |>
+kable_styling(full_width = F, font_size = 10, latex_options = "HOLD_position") |>
+row_spec(0, bold = T, color = "#a349a4") |>
+row_spec(1, bold = F, color = "#7f7f7f") |>
+column_spec(column = 1:3, width = '4.75cm')
+```
+
+
+
+```{r langforeign, results='markup', eval=FALSE}
+data.frame(
+  Skill = c("Reading", "Writing", "Listening","Speaking"),
+  French = cell_spec(c(rep("Native", 4)), 'latex', color = colorsLanguages[c(1)]), 
+  English = cell_spec(c("C2","C1","C2","C2"), 'latex', color = colorsLanguages[c(2)]), 
+  German = cell_spec(c("A2","A2","A2","A2"), 'latex', color = colorsLanguages[c(3)]) 
+) |>
+  kable(booktabs = T, align = 'c', escape = F, format = "latex") |>
+  kable_styling(full_width = F, font_size = 9, latex_options = "HOLD_position") |> 
+  footnote(
+    footnote_as_chunk = T,
+    general_title = " ",
+    general = "\\\\tiny Common European Framework of Reference for Languages: A1/A2: Basic User. B1/B2: Independent User. C1/C2: Proficient User",
+    escape = F
+  ) |>
+  column_spec(column = 1:6, width = '2.4cm') #|> 
+  # add_header_above(' ', line = F) |>
+  # row_spec(0:4, extra_latex_after = "\\arrayrulecolor{white}") 
+```
+
+
+
+<!-- \clearpage -->
+
+```{r, eval=TRUE,include=FALSE}
+rm(list=ls())
+```
